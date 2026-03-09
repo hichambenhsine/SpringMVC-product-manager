@@ -1,46 +1,41 @@
 package com.example.springmvcproductmanager.web;
 
+
 import com.example.springmvcproductmanager.entity.Product;
 import com.example.springmvcproductmanager.repository.ProductRepository;
+import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 @Controller
 public class ProductController {
+    @Autowired
     private ProductRepository productRepository;
 
-    public ProductController(ProductRepository productRepository){
-        this.productRepository=productRepository;
+    @GetMapping("/index")
+    public String index(Model model) {
+        List<Product> products = productRepository.findAll();
+        model.addAttribute("productList", products);
+        return "products";
     }
 
-    @GetMapping("/delete")
-    public String deleteProduct(Long id){
+    @GetMapping("/")
+    public String home() {
+        return "redirect:/user/index";
+    }
+
+    @PostMapping("/admin/delete")
+    public String delete(@RequestParam(name = "id") Long id) {
         productRepository.deleteById(id);
-        return "redirect:/index";
-    }
-
-    @GetMapping("/formProducts")
-    public String formProducts(Model model){
-        model.addAttribute("product",new Product());
-        return "formProducts";
-    }
-
-    @PostMapping("/save")
-    public String save(Product product, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
-            return "formProducts";
-        }
-        productRepository.save(product);
-        return "redirect:/index";
-    }
-
-    @GetMapping("/editProduct")
-    public String editProduct(Model model,Long id){
-        Product product=productRepository.findById(id).get();
-        model.addAttribute("product",product);
-        return "formProducts";
+        return "redirect:/user/index";
     }
 }
