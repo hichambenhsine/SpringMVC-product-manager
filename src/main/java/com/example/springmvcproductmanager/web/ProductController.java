@@ -33,9 +33,9 @@ public class ProductController {
         return "redirect:/user/index";
     }
 
-    @PostMapping("/admin/delete")
+    @PostMapping("/delete")
     public String delete(@RequestParam(name = "id") Long id) {
         productRepository.deleteById(id);
-        return "redirect:/user/index";
+        return "redirect:/index";
     }
 }
